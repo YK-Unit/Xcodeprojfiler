@@ -56,6 +56,10 @@ PS: Xcodeprojfiler will ignore the following files:
   - Podfile
   - Gemfile
   - .git/*
+  - *.xcassets
+  - *.xctemplat
+  - *.framework
+  - *.bundle
   - *.lock
   - *.py
   - *.rb
@@ -71,6 +75,9 @@ PS: Xcodeprojfiler will ignore the following files:
         "#{root_dir}/**/*.xcodeproj/**/*",
         "#{root_dir}/**/*.xcworkspace/**/*",
         "#{root_dir}/**/*.xcassets/**/*",
+        "#{root_dir}/**/*.xctemplat/**/*",
+        "#{root_dir}/**/*.framework//**/*",
+        "#{root_dir}/**/*.bundle/**/*",
         "#{root_dir}/**/.git/**/*",
         "#{root_dir}/**/fastlane/**/*",
         "#{root_dir}/**/Pods/**/*",
