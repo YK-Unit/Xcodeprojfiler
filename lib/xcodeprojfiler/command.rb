@@ -76,7 +76,7 @@ PS: Xcodeprojfiler will ignore the following files:
         "#{root_dir}/**/*.xcworkspace/**/*",
         "#{root_dir}/**/*.xcassets/**/*",
         "#{root_dir}/**/*.xctemplat/**/*",
-        "#{root_dir}/**/*.framework//**/*",
+        "#{root_dir}/**/*.framework/**/*",
         "#{root_dir}/**/*.bundle/**/*",
         "#{root_dir}/**/.git/**/*",
         "#{root_dir}/**/fastlane/**/*",
