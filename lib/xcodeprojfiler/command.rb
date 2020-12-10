@@ -16,7 +16,7 @@ module Xcodeprojfiler
     # xcluded_file_result_tuple = [included_file_array, excluded_file_array]
     #
     # @return [included_file_array, excluded_file_array]
-    def self.find_xclued_files
+    def self.find_xclued_files(ignored_regex_array)
       included_file_array = []
       excluded_file_array = []
 
@@ -70,6 +70,7 @@ PS: Xcodeprojfiler will ignore the following files:
   - *.sh
   - *.log
   - *.config
+  - *.properties
 
       MESSAGE
       puts("#{ignore_file_tips}")
@@ -87,9 +88,13 @@ PS: Xcodeprojfiler will ignore the following files:
         "#{root_dir}/**/Pods/**/*",
         "#{root_dir}/**/Podfile",
         "#{root_dir}/**/Gemfile",
-        "#{root_dir}/**/*{.xcworkspace,.xcodeproj,.lproj,.xcassets,.xctemplate,.framework,.bundle,.lock,.rb,.py,.sh,.log,.config}"
+        "#{root_dir}/**/*{.xcworkspace,.xcodeproj,.lproj,.xcassets,.xctemplate,.framework,.bundle,.lock,.rb,.py,.sh,.log,.config,.properties}"
       ]
       all_files = all_files - Dir.glob(excluded_file_regex_array)
+      if ignored_regex_array.empty? == false
+        puts("ignored_regex_array: #{ignored_regex_array}")
+        all_files = all_files - Dir.glob(ignored_regex_array)
+      end
 
       included_file_array = xcworkspace_file_array
       excluded_file_array =  all_files - included_file_array
@@ -133,14 +138,22 @@ PS: Xcodeprojfiler will ignore the following files:
       return true
     end
 
-    def self.show_excluded_files
-      xcluded_file_result_tuple = self.find_xclued_files
+    def self.show_excluded_files(shouldDelete, ignored_regex_array)
+      xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
       excluded_file_array = xcluded_file_result_tuple[1]
+
+      if shouldDelete
+        puts("")
+        puts("delete the excluded files now ...")
+        FileUtils.rm_f(excluded_file_array)
+        puts("delete the excluded files done !!!")
+      end
+
       dump_excluded_files_to_file(excluded_file_array)
     end
 
-    def self.show_excluded_code_files
-      xcluded_file_result_tuple = self.find_xclued_files
+    def self.show_excluded_code_files(shouldDelete, ignored_regex_array)
+      xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
       excluded_file_array = xcluded_file_result_tuple[1]
 
       code_file_types = [
@@ -159,6 +172,13 @@ PS: Xcodeprojfiler will ignore the following files:
         if code_file_types.include?(file_extname)
           next true
         end
+      end
+
+      if shouldDelete
+        puts("")
+        puts("delete the excluded files now ...")
+        FileUtils.rm_f(excluded_code_file_array)
+        puts("delete the excluded files done !!!")
       end
 
       dump_excluded_files_to_file(excluded_code_file_array)

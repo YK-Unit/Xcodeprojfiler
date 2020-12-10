@@ -1,6 +1,7 @@
 require 'thor'
 require "xcodeprojfiler/version"
 require 'xcodeprojfiler/command'
+require 'xcodeprojfiler/string_extensions'
 
 module Xcodeprojfiler
 
@@ -33,24 +34,53 @@ For example, Xcodeprojfiler can scan the current xcode project dir and find out 
     end
     map %w[-v --version] => :version
 
-    desc "show_excluded_files", "show the files which not included in xcworkspace"
+    desc "show_excluded_files [--ignores] [--delete]", "show and delete(if you choose) the files which not included in xcworkspace"
     long_desc <<-LONGDESC
       
-      Scan the current xcode project directory and find out the files which not included in xcworkspace
+      #{"With no option".bold}, #{"Xcodeprojfiler".bold} will scan the current xcode project directory and find out the files which not included in xcworkspace.
+
+      #{"With".bold} #{"--ignores".red.bold} #{"option".bold}, #{"Xcodeprojfiler".bold} will ignore the files which match the any ignored regular expression.
+
+      #{"With".bold} #{"--delete".red.bold} #{"option".bold}, #{"Xcodeprojfiler".bold}  will delete the excluded files after scan done.
+
+      #{"Example:".red.bold}
+
+        # show and delete the files which not included in xcworkspace, except those in Pods and Fastlane directory
+
+        xcodeprojfiler show_excluded_files #{"--ignores".red} ~/path/to/Pods/\*\*/\* ~/path/to/Fastlane/\*\*/\*  #{"--delete".red}
 
     LONGDESC
+    option :delete, :type => :boolean, :default => false
+    option :ignores, :type => :array, :default => []
     def show_excluded_files
-      Command.show_excluded_files
+      should_delete = options[:delete]
+      ignored_regex_array = options[:ignores]
+
+      Command.show_excluded_files(should_delete, ignored_regex_array)
     end
 
-    desc "show_excluded_code_files", "show the code files(C/C++/Objective-C/Objective-C++/Swift/xib/storyboard) which not included in xcworkspace"
+    desc "show_excluded_code_files [--ignores] [--delete]", "show and delete(if you choose) the code files(C/C++/Objective-C/Objective-C++/Swift/xib/storyboard) which not included in xcworkspace"
     long_desc <<-LONGDESC
-      
-      Scan the current xcode project directory and find out the code files(C/C++/Objective-C/Objective-C++/Swift/xib/storyboard) which not included in xcworkspace
+      #{"With no option".bold}, #{"Xcodeprojfiler".bold} will scan the current xcode project directory and find out the code files(C/C++/Objective-C/Objective-C++/Swift/xib/storyboard) which not included in xcworkspace.
+
+      #{"With".bold} #{"--ignores".red.bold} #{"option".bold}, #{"Xcodeprojfiler".bold} will ignore the files which match the any ignored regular expression.
+
+      #{"With".bold} #{"--delete".red.bold} #{"option".bold}, #{"Xcodeprojfiler".bold}  will delete the excluded code files after scan done.
+
+      #{"Example:".red.bold}
+
+        # show and delete the code files which not included in xcworkspace, except those in Pods and Fastlane directory
+
+        xcodeprojfiler show_excluded_code_files #{"--ignores".red} ~/path/to/Pods/\*\*/\* ~/path/to/Fastlane/\*\*/\*  #{"--delete".red}
 
     LONGDESC
+    option :delete, :type => :boolean, :default => false
+    option :ignores, :type => :array, :default => []
     def show_excluded_code_files
-      Command.show_excluded_code_files
+      should_delete = options[:delete]
+      ignored_regex_array = options[:ignores]
+
+      Command.show_excluded_code_files(should_delete, ignored_regex_array)
     end
 
   end
