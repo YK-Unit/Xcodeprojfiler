@@ -15,9 +15,6 @@ sudo gem install xcodeprojfiler
 ```shell
 cd path/to/a-xcode-project-dir
 
-# show the excluded code files
-xcodeprojfiler show_excluded_code_files
-
 # show the files which not included in xcworkspace 
 xcodeprojfiler show_excluded_files
 
