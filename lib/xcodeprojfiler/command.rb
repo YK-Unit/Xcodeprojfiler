@@ -47,10 +47,6 @@ module Xcodeprojfiler
           proj.files.each do  |pbx_file_ref|
             full_file_path = "#{proj.project_dir}/#{pbx_file_ref.full_path}"
             xcworkspace_file_array.push(full_file_path)
-
-            if file_ref.path == "ChannelProject/BaseService.xcodeproj"
-              puts("xcworkspace_file: #{full_file_path}")
-            end
           end
         end
       end
