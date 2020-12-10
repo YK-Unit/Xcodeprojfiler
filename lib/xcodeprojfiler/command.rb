@@ -38,12 +38,16 @@ module Xcodeprojfiler
       xcworkspace = Xcodeproj::Workspace.new_from_xcworkspace(xcworkspace_file)
       xcworkspace_file_references = xcworkspace.file_references
 
-      xcodeproj_array = []
+      xcworkspace_file_array = []
       xcworkspace_file_references.each do |file_ref|
         if file_ref.path != "Pods/Pods.xcodeproj"
           proj_absolute_path = "#{root_dir}/#{file_ref.path}"
           proj = Xcodeproj::Project::open(proj_absolute_path)
-          xcodeproj_array.push(proj)
+          proj.files.each do  |pbx_file_ref|
+            full_file_path = "#{root_dir}/#{pbx_file_ref.full_path}"
+            xcworkspace_file_array.push(full_file_path)
+            # puts("xcworkspace_file: #{full_file_path}")
+          end
         end
       end
 
@@ -57,7 +61,7 @@ PS: Xcodeprojfiler will ignore the following files:
   - Gemfile
   - .git/*
   - *.xcassets
-  - *.xctemplat
+  - *.xctemplate
   - *.framework
   - *.bundle
   - *.lock
@@ -70,12 +74,12 @@ PS: Xcodeprojfiler will ignore the following files:
       MESSAGE
       puts("#{ignore_file_tips}")
 
-      all_files = Dir.glob(["#{root_dir}/**/*"])
+      all_files = Dir.glob(["#{root_dir}/**/*.*"])
       excluded_file_regex_array = [
         "#{root_dir}/**/*.xcodeproj/**/*",
         "#{root_dir}/**/*.xcworkspace/**/*",
         "#{root_dir}/**/*.xcassets/**/*",
-        "#{root_dir}/**/*.xctemplat/**/*",
+        "#{root_dir}/**/*.xctemplate/**/*",
         "#{root_dir}/**/*.framework/**/*",
         "#{root_dir}/**/*.bundle/**/*",
         "#{root_dir}/**/.git/**/*",
@@ -83,31 +87,12 @@ PS: Xcodeprojfiler will ignore the following files:
         "#{root_dir}/**/Pods/**/*",
         "#{root_dir}/**/Podfile",
         "#{root_dir}/**/Gemfile",
-        "#{root_dir}/**/*{.lock,.rb,.py,.sh,.log,.config}"
+        "#{root_dir}/**/*{.xcworkspace,.xcodeproj,.lproj,.xcassets,.xctemplate,.framework,.bundle,.lock,.rb,.py,.sh,.log,.config}"
       ]
       all_files = all_files - Dir.glob(excluded_file_regex_array)
 
-      all_files.each do |file|
-        if File.file?(file) == false
-          next
-        end
-
-        is_include = false
-        xcodeproj_array.each do |proj|
-          if proj.reference_for_path(file)
-            is_include = true
-            break
-          end
-        end
-
-        if is_include
-          # puts("find included file: #{file}")
-          included_file_array.push(file)
-        else
-          puts("find excluded file: #{file}")
-          excluded_file_array.push(file)
-        end
-      end
+      included_file_array = xcworkspace_file_array
+      excluded_file_array =  all_files - included_file_array
 
       puts("")
       puts("scan the current directory done !!!")
