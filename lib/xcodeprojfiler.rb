@@ -43,6 +43,16 @@ For example, Xcodeprojfiler can scan the current xcode project dir and find out 
       Command.show_excluded_files
     end
 
+    desc "show_excluded_code_files", "Scan the current xcode project dir and find out the code files(C/C++/Objective-C/Objective-C++/Swift/xib/storyboard) which are not included in xcworkspace"
+    long_desc <<-LONGDESC
+      
+      Scan the current xcode project dir and find out the code files(C/C++/Objective-C/Objective-C++/Swift/xib/storyboard) which are not included in xcworkspace
+
+    LONGDESC
+    def show_excluded_code_files
+      Command.show_excluded_code_files
+    end
+
   end
 
 end

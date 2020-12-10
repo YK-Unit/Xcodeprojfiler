@@ -138,5 +138,30 @@ PS: Xcodeprojfiler will ignore the following files:
       excluded_file_array = xcluded_file_result_tuple[1]
       dump_excluded_files_to_file(excluded_file_array)
     end
+
+    def self.show_excluded_code_files
+      xcluded_file_result_tuple = self.find_xclued_files
+      excluded_file_array = xcluded_file_result_tuple[1]
+
+      code_file_types = [
+        ".h",
+        ".c",
+        ".cpp",
+        ".m",
+        ".mm",
+        ".swift",
+        ".xib",
+        ".storyboard"
+      ]
+
+      excluded_code_file_array = excluded_file_array.select do |file|
+        file_extname = File.extname(file)
+        if code_file_types.include?(file_extname)
+          next true
+        end
+      end
+
+      dump_excluded_files_to_file(excluded_code_file_array)
+    end
   end
 end
