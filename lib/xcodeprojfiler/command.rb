@@ -108,10 +108,11 @@ PS: Xcodeprojfiler will ignore the following files:
       root_dir = "#{Pathname::pwd}"
       yaml_file_path = "#{root_dir}/excluded_files.yaml"
       yaml_file = File.open(yaml_file_path, 'w')
-      excluded_files_content = excluded_file_array
 
+      excluded_file_array.uniq!
+      excluded_file_array.sort!
       yaml_content = {
-        "excluded_files" => excluded_files_content
+        "excluded_files" => excluded_file_array
       }.to_yaml
       # remove three dashes (“---”).
       #
