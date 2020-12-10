@@ -42,11 +42,15 @@ module Xcodeprojfiler
       xcworkspace_file_references.each do |file_ref|
         if file_ref.path != "Pods/Pods.xcodeproj"
           proj_absolute_path = "#{root_dir}/#{file_ref.path}"
+          # puts("xcworkspace_project: #{proj_absolute_path}")
           proj = Xcodeproj::Project::open(proj_absolute_path)
           proj.files.each do  |pbx_file_ref|
-            full_file_path = "#{root_dir}/#{pbx_file_ref.full_path}"
+            full_file_path = "#{proj.project_dir}/#{pbx_file_ref.full_path}"
             xcworkspace_file_array.push(full_file_path)
-            # puts("xcworkspace_file: #{full_file_path}")
+
+            if file_ref.path == "ChannelProject/BaseService.xcodeproj"
+              puts("xcworkspace_file: #{full_file_path}")
+            end
           end
         end
       end
