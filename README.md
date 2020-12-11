@@ -5,7 +5,7 @@ Xcodeprojfiler is a CLI tooL which can help iOS developer to get the info of fil
 For example, Xcodeprojfiler can scan the current xcode project dir and find out the files which are not included in xcworkspace.
 
 
-## Installation
+## Install & Update
 
 ```shell
 sudo gem install xcodeprojfiler
