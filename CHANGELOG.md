@@ -1,4 +1,10 @@
-## 0.1.0
+## 0.3.0
+
+- support to show and delete the library type(`.framework`/`.a`) and bundle type(`.bundle`) files which are not included in xcworkspace
+
+  
+
+## 0.2.0
 
 - support to show and delete the files which are not included in xcworkspace
 
