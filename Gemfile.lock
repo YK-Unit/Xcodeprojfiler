@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    xcodeprojfiler (0.2.0)
+    xcodeprojfiler (0.3.0)
       bundler (~> 2.0, >= 2.0.2)
       thor (~> 1.0, >= 1.0.1)
       xcodeproj (~> 1.0, >= 1.9.0)

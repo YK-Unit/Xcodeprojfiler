@@ -1,5 +1,6 @@
 require 'xcodeproj'
 require 'yaml'
+require 'xcodeprojfiler/string_extensions'
 
 module Xcodeprojfiler
 
@@ -7,6 +8,31 @@ module Xcodeprojfiler
     def self.version
       version_desc = "#{Xcodeprojfiler::VERSION}"
       puts(version_desc)
+    end
+
+    def self.show_common_tips_before_scan
+      puts("")
+      puts("PS: If the xcode project is very large, Xcodeprojfiler needs more than 5min to scan")
+      puts("")
+      ignore_file_tips = <<-MESSAGE
+PS: Xcodeprojfiler do ignore the following files:
+
+  - fastlane/*
+  - Pods/*
+  - Podfile
+  - Gemfile
+  - .git/*
+  - *.xctemplate
+  - *.lock
+  - *.py
+  - *.rb
+  - *.sh
+  - *.log
+  - *.config
+  - *.properties
+
+      MESSAGE
+      puts("#{ignore_file_tips}")
     end
 
     # find_xclued_files  ->  xcluded_file_result_tuple
@@ -27,13 +53,13 @@ module Xcodeprojfiler
       # xcworkspace_file = "/Users/yorkfish/Workspace/Demo-Projects/TestGitFilter-OC/TestGitFilter-OC.xcworkspace"
 
       if xcworkspace_file == nil
-        puts("Xcodeprojfiler Error: not exited xcworkspace file: #{xcworkspace_file}")
+        puts("")
+        puts("[!] No xcworkspace file found in the current working directory".red)
         return [included_file_array, excluded_file_array]
       end
 
-      puts("scan the current directory now ...")
       puts("")
-      puts("PS: if the xcode project is very larger, Xcodeprojfiler needs more than 10min to scan")
+      puts("scan the current working directory now ...")
 
       xcworkspace = Xcodeproj::Workspace.new_from_xcworkspace(xcworkspace_file)
       xcworkspace_file_references = xcworkspace.file_references
@@ -51,30 +77,6 @@ module Xcodeprojfiler
         end
       end
 
-      puts("")
-      ignore_file_tips = <<-MESSAGE
-PS: Xcodeprojfiler will ignore the following files:
-
-  - fastlane/*
-  - Pods/*
-  - Podfile
-  - Gemfile
-  - .git/*
-  - *.xcassets
-  - *.xctemplate
-  - *.framework
-  - *.bundle
-  - *.lock
-  - *.py
-  - *.rb
-  - *.sh
-  - *.log
-  - *.config
-  - *.properties
-
-      MESSAGE
-      puts("#{ignore_file_tips}")
-
       all_files = Dir.glob(["#{root_dir}/**/*.*"])
       excluded_file_regex_array = [
         "#{root_dir}/**/*.xcodeproj/**/*",
@@ -88,7 +90,7 @@ PS: Xcodeprojfiler will ignore the following files:
         "#{root_dir}/**/Pods/**/*",
         "#{root_dir}/**/Podfile",
         "#{root_dir}/**/Gemfile",
-        "#{root_dir}/**/*{.xcworkspace,.xcodeproj,.lproj,.xcassets,.xctemplate,.framework,.bundle,.lock,.rb,.py,.sh,.log,.config,.properties}"
+        "#{root_dir}/**/*{.git,.xcworkspace,.xcodeproj,.lproj,.xctemplate,.lock,.rb,.py,.sh,.log,.config,.properties}"
       ]
       all_files = all_files - Dir.glob(excluded_file_regex_array)
       if ignored_regex_array.empty? == false
@@ -100,7 +102,7 @@ PS: Xcodeprojfiler will ignore the following files:
       excluded_file_array =  all_files - included_file_array
 
       puts("")
-      puts("scan the current directory done !!!")
+      puts("scan the current working directory done !!!")
 
       return [included_file_array, excluded_file_array]
     end
@@ -139,13 +141,15 @@ PS: Xcodeprojfiler will ignore the following files:
     end
 
     def self.show_excluded_files(shouldDelete, ignored_regex_array)
+      self.show_common_tips_before_scan
       xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
       excluded_file_array = xcluded_file_result_tuple[1]
 
       if shouldDelete
         puts("")
         puts("delete the excluded files now ...")
-        FileUtils.rm_f(excluded_file_array)
+        FileUtils.rm_rf(excluded_file_array)
+        puts("")
         puts("delete the excluded files done !!!")
       end
 
@@ -153,8 +157,7 @@ PS: Xcodeprojfiler will ignore the following files:
     end
 
     def self.show_excluded_code_files(shouldDelete, ignored_regex_array)
-      xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
-      excluded_file_array = xcluded_file_result_tuple[1]
+      self.show_common_tips_before_scan
 
       code_file_types = [
         ".h",
@@ -163,10 +166,21 @@ PS: Xcodeprojfiler will ignore the following files:
         ".m",
         ".mm",
         ".swift",
+        ".a",
+        ".framework",
         ".xib",
-        ".storyboard"
+        ".storyboard",
       ]
 
+      puts("")
+      puts("PS: Xcodeprojfiler will show and delete(if you choose) the following code files:")
+      puts("")
+      code_file_types.each do |code_file_type|
+        puts("  - *#{code_file_type}")
+      end
+
+      xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
+      excluded_file_array = xcluded_file_result_tuple[1]
       excluded_code_file_array = excluded_file_array.select do |file|
         file_extname = File.extname(file)
         if code_file_types.include?(file_extname)
@@ -177,7 +191,8 @@ PS: Xcodeprojfiler will ignore the following files:
       if shouldDelete
         puts("")
         puts("delete the excluded files now ...")
-        FileUtils.rm_f(excluded_code_file_array)
+        FileUtils.rm_rf(excluded_code_file_array)
+        puts("")
         puts("delete the excluded files done !!!")
       end
 
