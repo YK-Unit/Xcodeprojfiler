@@ -4,6 +4,10 @@ Xcodeprojfiler is a CLI tooL which can help iOS developer to get the info of fil
 
 For example, Xcodeprojfiler can scan the current xcode project dir and find out the files which are not included in xcworkspace.
 
+## Feature
+- Support to show and delete(if you choose) the files which are not included in xcworkspace
+- Support to show and delete(if you choose) the code files(`C/C++/Objective-C/Objective-C++/Swift/xib/storyboard`) which are not included in xcworkspace
+- Support to tell xcodeprojfiler to ignore  the files which you want with customized regex
 
 ## Install & Update
 
