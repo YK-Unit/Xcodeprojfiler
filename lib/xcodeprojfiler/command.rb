@@ -93,8 +93,14 @@ PS: Xcodeprojfiler do ignore the following files:
         "#{root_dir}/**/*{.git,.xcworkspace,.xcodeproj,.lproj,.xctemplate,.lock,.rb,.py,.sh,.log,.config,.properties}"
       ]
       all_files = all_files - Dir.glob(excluded_file_regex_array)
+
       if ignored_regex_array.empty? == false
-        puts("ignored_regex_array: #{ignored_regex_array}")
+        puts("")
+        puts("Xcodeprojfiler will ignore the following files which you specify:")
+        puts("")
+        ignored_regex_array.each do |regex|
+          puts("  - #{regex}")
+        end
         all_files = all_files - Dir.glob(ignored_regex_array)
       end
 

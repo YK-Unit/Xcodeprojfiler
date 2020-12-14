@@ -47,7 +47,7 @@ For example, Xcodeprojfiler can scan the current xcode project dir and find out 
 
         # show and delete the files which not included in xcworkspace, except those in Pods and Fastlane directory
 
-        xcodeprojfiler show_excluded_files #{"--ignores".red} $(pwd)/Pods/\\*\\*/\\* $(pwd)/Fastlane/\\*\\*/\\*  #{"--delete".red}
+        xcodeprojfiler show_excluded_files #{"--ignores".red} "$(pwd)/Pods/**/*" "$(pwd)/Fastlane/**/*" #{"--delete".red}
 
     LONGDESC
     option :delete, :type => :boolean, :default => false
@@ -71,7 +71,7 @@ For example, Xcodeprojfiler can scan the current xcode project dir and find out 
 
         # show and delete the code files which not included in xcworkspace, except those in Pods and Fastlane directory
 
-        xcodeprojfiler show_excluded_files #{"--ignores".red} $(pwd)/Pods/\\*\\*/\\* $(pwd)/Fastlane/\\*\\*/\\*  #{"--delete".red}
+        xcodeprojfiler show_excluded_files #{"--ignores".red} "$(pwd)/Pods/**/*" "$(pwd)/Fastlane/**/*" #{"--delete".red}
 
     LONGDESC
     option :delete, :type => :boolean, :default => false
