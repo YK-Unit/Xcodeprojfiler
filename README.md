@@ -26,10 +26,10 @@ xcodeprojfiler show_excluded_files
 xcodeprojfiler show_excluded_code_files
 
 # show and delete the code files which not included in xcworkspace, except those in LocalComponent directory
-xcodeprojfiler show_excluded_code_files --ignores $(pwd)/LocalComponent/\*\*/\* --delete
+xcodeprojfiler show_excluded_code_files --ignores "$(pwd)/LocalComponent/**/*" --delete
 
 # show and delete the code files which not included in xcworkspace, except those in Pods and Fastlane directory
-xcodeprojfiler show_excluded_code_files --ignores $(pwd)/Pods/\*\*/\* $(pwd)/Fastlane/\*\*/\* --delete
+xcodeprojfiler show_excluded_code_files --ignores "$(pwd)/Pods/**/*" "$(pwd)/Fastlane/**/*" --delete
 
 # Describe available commands or one specific command
 xcodeprojfiler help
