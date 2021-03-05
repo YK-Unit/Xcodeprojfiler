@@ -64,6 +64,7 @@ PS: Xcodeprojfiler do ignore the following files:
       xcworkspace = Xcodeproj::Workspace.new_from_xcworkspace(xcworkspace_file)
       xcworkspace_file_references = xcworkspace.file_references
 
+      # TODO: 需要设置成是否忽略"Pods/Pods.xcodeproj"
       xcworkspace_file_array = []
       xcworkspace_file_references.each do |file_ref|
         if file_ref.path != "Pods/Pods.xcodeproj"
@@ -146,6 +147,33 @@ PS: Xcodeprojfiler do ignore the following files:
       return true
     end
 
+    # dump_yaml_obj_to_file -> true
+    #
+    # 保存 yaml_obj 到 yaml_file_path
+    #
+    def self.dump_yaml_obj_to_file(yaml_obj, yaml_file_path)
+      yaml_file = File.open(yaml_file_path, 'w')
+
+      yaml_content = yaml_obj.to_yaml
+      # remove three dashes (“---”).
+      #
+      # To get the details about three dashes (“---”)
+      # see: https://yaml.org/spec/1.2/spec.html#id2760395
+      #
+      document_separate_maker = "---\n"
+      regx = /\A#{document_separate_maker}/
+      if yaml_content =~ regx
+        yaml_content[document_separate_maker] = ""
+      end
+
+      yaml_file.write(yaml_content)
+      yaml_file.close
+
+      puts("")
+      puts("to see the result files from: #{yaml_file_path}")
+      return true
+    end
+
     def self.show_excluded_files(shouldDelete, ignored_regex_array)
       self.show_common_tips_before_scan
       xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
@@ -204,5 +232,38 @@ PS: Xcodeprojfiler do ignore the following files:
 
       dump_excluded_files_to_file(excluded_code_file_array)
     end
+
+    def self.show_included_files(ignored_regex_array)
+      self.show_common_tips_before_scan
+      xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
+      included_file_array = xcluded_file_result_tuple[0]
+
+      yaml_obj = {
+        "included_files" => included_file_array
+      }
+      root_dir = "#{Pathname::pwd}"
+      yaml_file_path = "#{root_dir}/included_files.yaml"
+
+      dump_yaml_obj_to_file(yaml_obj,yaml_file_path)
+    end
+
+    def self.show_included_binary_files(ignored_regex_array, supported_arch_type_arry, unsupported_arch_type_arry)
+      self.show_common_tips_before_scan
+      xcluded_file_result_tuple = self.find_xclued_files(ignored_regex_array)
+      included_file_array = xcluded_file_result_tuple[0]
+
+      included_binary_file_array = included_file_array
+
+      yaml_obj = {
+        "included_binary_files" => included_binary_file_array
+      }
+
+      root_dir = "#{Pathname::pwd}"
+      yaml_file_path = "#{root_dir}/included_binary_files.yaml"
+
+      dump_yaml_obj_to_file(yaml_obj,yaml_file_path)
+    end
+
+
   end
 end
